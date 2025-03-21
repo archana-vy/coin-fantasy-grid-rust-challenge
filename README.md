@@ -1,0 +1,1 @@
+# coin-fantasy-grid-rust-challenge
