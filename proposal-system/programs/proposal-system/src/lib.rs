@@ -1,9 +1,12 @@
+pub(crate) mod storage_accounts;
+pub(crate) mod context;
+
+use context::*;
+
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::program_pack::Pack;
 
 #[cfg(feature = "devnet")]
 const PROGRAM_ID: Pubkey = Pubkey::from_str_const("2F3xVyraFXuZpCShqg2YVuF5HxNukmGtGdkm5fJ41L3R");
-
 
 // Fallback for when no feature is specified
 #[cfg(not(any(feature = "devnet")))]
@@ -20,44 +23,32 @@ pub mod proposal_system {
         multisig_program.multisig_accounts = Vec::new();
         Ok(())
     }
-}
 
-#[derive(Accounts)]
-pub struct Initialize<'info> {
-    #[account(
-        init,
-        payer = signer,
-        space = 8 + 4 + (32 * 100) // 8 bytes (discriminator) + 4 bytes (Vec len) + (Pubkey size * max no. of accounts)
-    )]
-    pub multisig_program: Account<'info, MultisigProgram>,
-    #[account(mut)]
-    pub signer: Signer<'info>,
-    pub system_program: Program<'info, System>,
-}
+    pub fn create_multisig(_ctx: Context<CreateMultisig>) -> Result<()> {
+        Ok(())
+    }
 
-#[account]
-#[derive(Debug)]
-pub struct MultisigProgram {
-    // initializer just to track multisig accounts created using the program
-    pub multisig_accounts: Vec<Pubkey>,
-    // add more parameters if requires
-}
+    pub fn add_signer(_ctx: Context<Initialize>) -> Result<()> {
+        Ok(())
+    }
 
-#[account]
-pub struct Multisig {
-    pub name: String,
-    pub creator: Pubkey,
-    pub signers: Vec<Pubkey>,
-    pub threshold: u32,
-    pub proposal_count: u64,
-}
+    pub fn remove_signer(_ctx: Context<Initialize>) -> Result<()> {
+        Ok(())
+    }
 
-#[account]
-pub struct Proposal {
-    pub multisig: Pubkey,
-    pub creator: Pubkey,
-    pub calldata: Vec<u8>,
-    pub approvals: Vec<Pubkey>,
-    pub executed: bool,
-}
+    pub fn create_proposal(_ctx: Context<CreateProposal>) -> Result<()> {
+        Ok(())
+    }
 
+    pub fn approve_proposal(_ctx: Context<Initialize>) -> Result<()> {
+        Ok(())
+    }
+
+    pub fn revoke_approval(_ctx: Context<Initialize>) -> Result<()> {
+        Ok(())
+    }
+
+    pub fn execute_proposal(_ctx: Context<Initialize>) -> Result<()> {
+        Ok(())
+    }
+}
