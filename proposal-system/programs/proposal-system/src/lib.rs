@@ -1,7 +1,12 @@
-pub(crate) mod storage_accounts;
 pub(crate) mod context;
+pub(crate) mod errors;
+pub(crate) mod events;
+pub(crate) mod storage_accounts;
 
 use context::*;
+use errors::*;
+use events::*;
+use storage_accounts::*;
 
 use anchor_lang::prelude::*;
 
@@ -16,6 +21,11 @@ declare_id!(PROGRAM_ID);
 
 #[program]
 pub mod proposal_system {
+
+    use std::ops::Mul;
+
+    use anchor_spl::token::{spl_token, Mint};
+
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
@@ -24,7 +34,39 @@ pub mod proposal_system {
         Ok(())
     }
 
-    pub fn create_multisig(_ctx: Context<CreateMultisig>) -> Result<()> {
+    pub fn create_multisig(
+        ctx: Context<CreateMultisig>,
+        name: String,
+        signers: Vec<Pubkey>,
+        threshold: u32,
+    ) -> Result<()> {
+        let multisig = &mut ctx.accounts.multisig;
+
+        require!(
+            name.len() <= MAX_NAME_LENGTH,
+            MultisigErrors::MaxAccountNameLength
+        );
+        require!(
+            signers.len() <= MAX_SIGNATORIES,
+            MultisigErrors::MultisigCreatorIsNotSigner
+        );
+        require!(
+            (threshold as usize) <= MAX_SIGNATORIES,
+            MultisigErrors::MaxThreshold
+        );
+
+        multisig.name = name;
+        multisig.creator = ctx.accounts.creator.key();
+        multisig.signers = signers;
+        multisig.threshold = threshold;
+        multisig.proposal_count = 0;
+
+        emit!(MultisigCreated {
+            multisig: multisig.key(),
+            creator: multisig.creator,
+            timestamp: Clock::get()?.unix_timestamp,
+        });
+
         Ok(())
     }
 
@@ -36,19 +78,92 @@ pub mod proposal_system {
         Ok(())
     }
 
-    pub fn create_proposal(_ctx: Context<CreateProposal>) -> Result<()> {
+    pub fn create_proposal(
+        ctx: Context<CreateProposal>,
+        instruction: InstructionType,
+    ) -> Result<()> {
+        let multisig = &ctx.accounts.multisig;
+        let proposal = &mut ctx.accounts.proposal;
+        let mint = &mut ctx.accounts.mint;
+        let creator = ctx.accounts.creator.key();
+
+        require!(
+            multisig.signers.contains(&creator),
+            MultisigErrors::InvalidProposer
+        );
+
+        proposal.multisig = multisig.key();
+        proposal.creator = creator;
+        proposal.instruction = instruction;
+        proposal.mint = mint.key();
+        proposal.votes = Vec::new();
+        proposal.executed = false;
+
+        emit!(ProposalCreated {
+            multisig: proposal.multisig,
+            proposal: proposal.key(),
+            creator: proposal.creator,
+            timestamp: Clock::get()?.unix_timestamp,
+        });
+
         Ok(())
     }
 
-    pub fn approve_proposal(_ctx: Context<Initialize>) -> Result<()> {
+    pub fn vote_proposal(ctx: Context<VoteProposal>) -> Result<()> {
+        let multisig = &ctx.accounts.multisig;
+        let proposal = &mut ctx.accounts.proposal;
+        let voter = ctx.accounts.signer.key();
+
+        require!(
+            multisig.signers.contains(&voter),
+            MultisigErrors::InvalidVoter
+        );
+
+        require!(
+            proposal.votes.contains(&voter),
+            MultisigErrors::ProposalAlreadyVoted
+        );
+
+        proposal.votes.push(voter);
+
+        emit!(ProposalVoted {
+            multisig: proposal.multisig,
+            proposal: proposal.key(),
+            voter: voter,
+            timestamp: Clock::get()?.unix_timestamp,
+        });
+
         Ok(())
     }
 
-    pub fn revoke_approval(_ctx: Context<Initialize>) -> Result<()> {
-        Ok(())
-    }
+    pub fn execute_proposal(ctx: Context<ExecuteProposal>) -> Result<()> {
+        let multisig = &ctx.accounts.multisig;
+        let proposal = &mut ctx.accounts.proposal;
+        let executor = ctx.accounts.executor.key();
 
-    pub fn execute_proposal(_ctx: Context<Initialize>) -> Result<()> {
+        require!(
+            proposal.creator.eq(&executor),
+            MultisigErrors::InvalidExecutor
+        );
+
+        require!(
+            (proposal.votes.len() as u32) >= multisig.threshold,
+            MultisigErrors::NotEnoughVotes
+        );
+
+        require!(!proposal.executed, MultisigErrors::AlreadyExecuted);
+
+        // CPI logic to execute calldata
+
+        proposal.executed = true;
+
+        emit!(ProposalExecuted {
+            multisig: proposal.multisig,
+            proposal: proposal.key(),
+            executor: executor,
+            timestamp: Clock::get()?.unix_timestamp,
+        });
+
         Ok(())
     }
 }
