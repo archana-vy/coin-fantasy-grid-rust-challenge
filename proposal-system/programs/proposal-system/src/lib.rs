@@ -20,12 +20,10 @@ const PROGRAM_ID: Pubkey = Pubkey::from_str_const("D9es5JgK89P3DHSDdD2bFnn3iYzc5
 declare_id!(PROGRAM_ID);
 
 #[program]
-pub mod proposal_system {
-
-    use std::ops::Mul;
+pub mod proposal_system {    
 
     use anchor_lang::solana_program::{program::invoke, system_instruction};
-    use anchor_spl::token::{self, spl_token, Mint, MintTo, Transfer};
+    use anchor_spl::token::{self, MintTo, Transfer};
 
     use super::*;
 

@@ -8,7 +8,7 @@ pub struct ExecuteProposal<'info> {
     #[account(mut)]
     pub multisig: Account<'info, Multisig>,
 
-    #[account(mut, has_one = multisig)]
+    #[account(mut, has_one = multisig, close = executor)]
     pub proposal: Account<'info, Proposal>,
 
     #[account(signer)]
@@ -20,7 +20,7 @@ pub struct ExecuteProposal<'info> {
     #[account(mut)]
     pub to: Account<'info, TokenAccount>,
 
-    #[account(mut)]
+    #[account(mut, owner = token_program.key())]
     pub mint: Account<'info, Mint>,
 
     #[account(mut)]
