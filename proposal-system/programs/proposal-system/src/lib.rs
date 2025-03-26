@@ -24,7 +24,8 @@ pub mod proposal_system {
 
     use std::ops::Mul;
 
-    use anchor_spl::token::{spl_token, Mint};
+    use anchor_lang::solana_program::{program::invoke, system_instruction};
+    use anchor_spl::token::{self, spl_token, Mint, MintTo, Transfer};
 
     use super::*;
 
@@ -154,6 +155,110 @@ pub mod proposal_system {
         require!(!proposal.executed, MultisigErrors::AlreadyExecuted);
 
         // CPI logic to execute calldata
+
+        match proposal.instruction {
+            InstructionType::Mint { to, amount } => {
+                require!(
+                    ctx.accounts.to.key() == to,
+                    MultisigErrors::InvalidMintToPubkey
+                );
+                let cpi_accounts = MintTo {
+                    mint: ctx.accounts.mint.to_account_info(),
+                    to: ctx.accounts.to.to_account_info(),
+                    authority: ctx.accounts.mint_authority.to_account_info(),
+                };
+                let cpi_ctx =
+                    CpiContext::new(ctx.accounts.token_program.to_account_info(), cpi_accounts);
+                token::mint_to(cpi_ctx, amount)?;
+            }
+            InstructionType::Transfer { from, to, amount } => {
+                require!(
+                    ctx.accounts.from.key() == from,
+                    MultisigErrors::InvalidTransferToPubkey
+                );
+                require!(
+                    ctx.accounts.to.key() == to,
+                    MultisigErrors::InvalidTransferFromPubkey
+                );
+
+                let cpi_accounts = Transfer {
+                    from: ctx.accounts.from.to_account_info(),
+                    to: ctx.accounts.to.to_account_info(),
+                    authority: ctx.accounts.mint_authority.to_account_info(),
+                };
+                let cpi_ctx =
+                    CpiContext::new(ctx.accounts.token_program.to_account_info(), cpi_accounts);
+                token::transfer(cpi_ctx, amount)?;
+            }
+            InstructionType::Buy {
+                seller,
+                buyer,
+                token_amount,
+                sol_price,
+            } => {
+                require!(
+                    ctx.accounts.from.key() == seller,
+                    MultisigErrors::InvalidTransferSellerPubkey
+                );
+                require!(
+                    ctx.accounts.to.key() == buyer,
+                    MultisigErrors::InvalidTransferBuyerPubkey
+                );
+
+                // Transfer SOL from buyer to seller
+                invoke(
+                    &system_instruction::transfer(&seller, &buyer, sol_price),
+                    &[
+                        ctx.accounts.to.to_account_info(),
+                        ctx.accounts.from.to_account_info(),
+                        ctx.accounts.system_program.to_account_info(),
+                    ],
+                )?;
+
+                let cpi_accounts = Transfer {
+                    from: ctx.accounts.from.to_account_info(),
+                    to: ctx.accounts.to.to_account_info(),
+                    authority: ctx.accounts.mint_authority.to_account_info(),
+                };
+                let cpi_ctx =
+                    CpiContext::new(ctx.accounts.token_program.to_account_info(), cpi_accounts);
+                token::transfer(cpi_ctx, token_amount)?;
+            }
+            InstructionType::Sell {
+                seller,
+                buyer,
+                token_amount,
+                sol_price,
+            } => {
+                require!(
+                    ctx.accounts.from.key() == seller,
+                    MultisigErrors::InvalidTransferSellerPubkey
+                );
+                require!(
+                    ctx.accounts.to.key() == buyer,
+                    MultisigErrors::InvalidTransferBuyerPubkey
+                );
+
+                // Transfer SOL from buyer to seller
+                invoke(
+                    &system_instruction::transfer(&seller, &buyer, sol_price),
+                    &[
+                        ctx.accounts.to.to_account_info(),
+                        ctx.accounts.from.to_account_info(),
+                        ctx.accounts.system_program.to_account_info(),
+                    ],
+                )?;
+
+                let cpi_accounts = Transfer {
+                    from: ctx.accounts.from.to_account_info(),
+                    to: ctx.accounts.to.to_account_info(),
+                    authority: ctx.accounts.mint_authority.to_account_info(),
+                };
+                let cpi_ctx =
+                    CpiContext::new(ctx.accounts.token_program.to_account_info(), cpi_accounts);
+                token::transfer(cpi_ctx, token_amount)?;
+            }
+        };
 
         proposal.executed = true;
 

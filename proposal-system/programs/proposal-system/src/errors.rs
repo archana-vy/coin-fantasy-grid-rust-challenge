@@ -14,4 +14,9 @@ pub enum MultisigErrors {
     InvalidExecutor,
     NotEnoughVotes,
     AlreadyExecuted,
+    InvalidMintToPubkey,
+    InvalidTransferToPubkey,
+    InvalidTransferFromPubkey,
+    InvalidTransferSellerPubkey,
+    InvalidTransferBuyerPubkey,
 }
