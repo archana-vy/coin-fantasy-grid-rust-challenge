@@ -118,7 +118,7 @@ pub mod proposal_system {
         );
 
         require!(
-            proposal.votes.contains(&voter),
+            !proposal.votes.contains(&voter),
             MultisigErrors::ProposalAlreadyVoted
         );
 

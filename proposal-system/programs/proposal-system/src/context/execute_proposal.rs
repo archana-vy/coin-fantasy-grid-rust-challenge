@@ -20,7 +20,7 @@ pub struct ExecuteProposal<'info> {
     #[account(mut)]
     pub to: Account<'info, TokenAccount>,
 
-    #[account(mut, owner = token_program.key())]
+    #[account(mut)]
     pub mint: Account<'info, Mint>,
 
     /// CHECK: This account is unchecked because it is required as the mint authority for token minting.
