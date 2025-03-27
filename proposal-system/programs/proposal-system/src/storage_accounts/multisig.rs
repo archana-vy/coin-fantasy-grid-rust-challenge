@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
-pub(crate) const MAX_NAME_LENGTH: usize = 32;
-pub(crate) const MAX_SIGNATORIES: usize = 100;
+pub const MAX_NAME_LENGTH: usize = 32;
+pub const MAX_SIGNATORIES: usize = 100;
 
 #[account]
 #[derive(Debug)]

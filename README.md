@@ -35,7 +35,7 @@ ln -sf $(pwd)/keypairs/local/proposal-system-keypair.json        target/deploy/p
 Deploy your program to the generated keypair using the following command.
 
 ```bash
-solana program deploy --program-id ./keypairs/local/proposal-system-keypair.json     --upgrade-authority /home/<system_name>/.config/solana/id.json     target/deploy/proposal_system.so
+solana program deploy --program-id ./keypairs/local/proposal-system-keypair.json     --upgrade-authority /home/archana/.config/solana/id.json     target/deploy/proposal_system.so
 ```
 
 The `solana-keygen new` command without file out path will generate the default keypair in the systems config folder for solana and I am using that accoutn as the upgrade authority for my program.

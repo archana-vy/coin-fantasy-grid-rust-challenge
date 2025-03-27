@@ -1,7 +1,7 @@
-pub(crate) mod context;
-pub(crate) mod errors;
-pub(crate) mod events;
-pub(crate) mod storage_accounts;
+pub mod context;
+pub mod errors;
+pub mod events;
+pub mod storage_accounts;
 
 use context::*;
 use errors::*;
@@ -9,6 +9,8 @@ use events::*;
 use storage_accounts::*;
 
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::{program::invoke, system_instruction};
+use anchor_spl::token::{self, MintTo, Transfer};
 
 #[cfg(feature = "devnet")]
 const PROGRAM_ID: Pubkey = Pubkey::from_str_const("2F3xVyraFXuZpCShqg2YVuF5HxNukmGtGdkm5fJ41L3R");
@@ -20,10 +22,7 @@ const PROGRAM_ID: Pubkey = Pubkey::from_str_const("D9es5JgK89P3DHSDdD2bFnn3iYzc5
 declare_id!(PROGRAM_ID);
 
 #[program]
-pub mod proposal_system {    
-
-    use anchor_lang::solana_program::{program::invoke, system_instruction};
-    use anchor_spl::token::{self, MintTo, Transfer};
+pub mod proposal_system {
 
     use super::*;
 
@@ -69,13 +68,13 @@ pub mod proposal_system {
         Ok(())
     }
 
-    pub fn add_signer(_ctx: Context<Initialize>) -> Result<()> {
-        Ok(())
-    }
+    // pub fn add_signer(_ctx: Context<AddSigner>) -> Result<()> {
+    //     Ok(())
+    // }
 
-    pub fn remove_signer(_ctx: Context<Initialize>) -> Result<()> {
-        Ok(())
-    }
+    // pub fn remove_signer(_ctx: Context<RemoveSigner>) -> Result<()> {
+    //     Ok(())
+    // }
 
     pub fn create_proposal(
         ctx: Context<CreateProposal>,

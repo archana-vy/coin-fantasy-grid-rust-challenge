@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use super::MAX_SIGNATORIES;
 
-pub(crate) const MAX_CALLDATA_SIZE: usize = 32 + 32 + 8 + 8;
+pub const MAX_CALLDATA_SIZE: usize = 32 + 32 + 8 + 8;
 
 #[derive(Debug, Clone, AnchorSerialize, AnchorDeserialize)]
 pub enum InstructionType {
