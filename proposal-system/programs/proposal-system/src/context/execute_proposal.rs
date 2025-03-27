@@ -23,10 +23,11 @@ pub struct ExecuteProposal<'info> {
     #[account(mut, owner = token_program.key())]
     pub mint: Account<'info, Mint>,
 
+    /// CHECK: This account is unchecked because it is required as the mint authority for token minting.
     #[account(mut)]
     pub mint_authority: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,
-    
-    pub token_program: Program<'info, Token>,  // Ensures the correct SPL token program is used
+
+    pub token_program: Program<'info, Token>, // Ensures the correct SPL token program is used
 }
