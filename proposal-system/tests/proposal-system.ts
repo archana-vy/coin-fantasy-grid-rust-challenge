@@ -8,6 +8,8 @@ import {
   getAssociatedTokenAddress,
   mintTo,
   getAccount,
+  createAssociatedTokenAccountInstruction,
+  createAssociatedTokenAccount,
 } from "@solana/spl-token";
 
 describe("proposal-system", () => {});
@@ -106,18 +108,21 @@ describe("proposal-system", () => {
     console.log("Mint created:", mintPubkey.toBase58());
 
     try {
-      tokenAccountPubkey = await getAssociatedTokenAddress(
+      // Step 2: Create the Associated Token Account for the User
+
+      creatorATA = await createAssociatedTokenAccount(
+        provider.connection,
+        creator, // Payer
+        mintPubkey, // Mint Address
+        creator.publicKey // Owner
+      );
+      creatorATA = await getAssociatedTokenAddress(
         mintPubkey,
         creator.publicKey
       );
-      await getAccount(provider.connection, tokenAccountPubkey);
-      console.log("Token account exists:", tokenAccountPubkey.toBase58());
 
-      // Step 2: Create an Associated Token Account for the User
-      creatorATA = await getAssociatedTokenAddress(mintPubkey, creator.publicKey);
-  
       console.log("Creator Token Account:", creatorATA.toBase58());
-  
+
       // Step 3: Mint tokens to the User's Associated Token Account
       await mintTo(
         provider.connection,
@@ -128,86 +133,124 @@ describe("proposal-system", () => {
         1000000000 // Amount to mint (in smallest unit)
       );
 
+      // Step 2: Create an Associated Token Account for the User
+
+      aliceATA = await createAssociatedTokenAccount(
+        provider.connection,
+        alice, // Payer
+        mintPubkey, // Mint Address
+        alice.publicKey // Owner
+      );
+
+      aliceATA = await getAssociatedTokenAddress(mintPubkey, alice.publicKey);
+
+      console.log("Alice Token Account:", aliceATA.toBase58());
+
+      // Step 3: Mint tokens to the User's Associated Token Account
+      await mintTo(
+        provider.connection,
+        creator,
+        mintPubkey,
+        aliceATA,
+        creator.publicKey, // Mint authority
+        1000000000 // Amount to mint (in smallest unit)
+      );
+
+      // Step 2: Create an Associated Token Account for the User
+
+      bobATA = await createAssociatedTokenAccount(
+        provider.connection,
+        bob, // Payer
+        mintPubkey, // Mint Address
+        bob.publicKey // Owner
+      );
+      bobATA = await getAssociatedTokenAddress(mintPubkey, bob.publicKey);
+
+      console.log("Bob Token Account:", bobATA.toBase58());
+
+      // Step 3: Mint tokens to the User's Associated Token Account
+      await mintTo(
+        provider.connection,
+        creator,
+        mintPubkey,
+        bobATA,
+        creator.publicKey, // Mint authority
+        1000000000 // Amount to mint (in smallest unit)
+      );
+
+      // Step 2: Create an Associated Token Account for the User
+
+      charlieATA = await createAssociatedTokenAccount(
+        provider.connection,
+        charlie, // Payer
+        mintPubkey, // Mint Address
+        charlie.publicKey // Owner
+      );
+      charlieATA = await getAssociatedTokenAddress(
+        mintPubkey,
+        charlie.publicKey
+      );
+
+      console.log("Charlie Token Account:", charlieATA.toBase58());
+
+      // Step 3: Mint tokens to the User's Associated Token Account
+      await mintTo(
+        provider.connection,
+        creator,
+        mintPubkey,
+        charlieATA,
+        creator.publicKey, // Mint authority
+        1000000000 // Amount to mint (in smallest unit)
+      );
+
+      // Step 2: Create an Associated Token Account for the User
+
+      daveATA = await createAssociatedTokenAccount(
+        provider.connection,
+        dave, // Payer
+        mintPubkey, // Mint Address
+        dave.publicKey // Owner
+      );
+      daveATA = await getAssociatedTokenAddress(mintPubkey, dave.publicKey);
+
+      console.log("Dave Token Account:", daveATA.toBase58());
+
+      // Step 3: Mint tokens to the User's Associated Token Account
+      await mintTo(
+        provider.connection,
+        creator,
+        mintPubkey,
+        daveATA,
+        creator.publicKey, // Mint authority
+        1000000000 // Amount to mint (in smallest unit)
+      );
+
+      // Step 2: Create an Associated Token Account for the User
+
+      eveATA = await createAssociatedTokenAccount(
+        provider.connection,
+        eve, // Payer
+        mintPubkey, // Mint Address
+        eve.publicKey // Owner
+      );
+      eveATA = await getAssociatedTokenAddress(mintPubkey, eve.publicKey);
+
+      console.log("Eve Token Account:", eveATA.toBase58());
+
+      // Step 3: Mint tokens to the User's Associated Token Account
+      await mintTo(
+        provider.connection,
+        creator,
+        mintPubkey,
+        eveATA,
+        creator.publicKey, // Mint authority
+        1000000000 // Amount to mint (in smallest unit)
+      );
+
       console.log("Minted tokens successfully");
     } catch (err) {
       console.log(err);
     }
-
-    // // Step 2: Create an Associated Token Account for the User
-    // aliceATA = await getAssociatedTokenAddress(mintPubkey, alice.publicKey);
-
-    // console.log("Alice Token Account:", aliceATA.toBase58());
-
-    // // Step 3: Mint tokens to the User's Associated Token Account
-    // await mintTo(
-    //   provider.connection,
-    //   creator,
-    //   mintPubkey,
-    //   aliceATA,
-    //   creator.publicKey, // Mint authority
-    //   1000000000 // Amount to mint (in smallest unit)
-    // );
-
-    // // Step 2: Create an Associated Token Account for the User
-    // bobATA = await getAssociatedTokenAddress(mintPubkey, bob.publicKey);
-
-    // console.log("Bob Token Account:", bobATA.toBase58());
-
-    // // Step 3: Mint tokens to the User's Associated Token Account
-    // await mintTo(
-    //   provider.connection,
-    //   creator,
-    //   mintPubkey,
-    //   bobATA,
-    //   creator.publicKey, // Mint authority
-    //   1000000000 // Amount to mint (in smallest unit)
-    // );
-
-    // // Step 2: Create an Associated Token Account for the User
-    // charlieATA = await getAssociatedTokenAddress(mintPubkey, charlie.publicKey);
-
-    // console.log("Charlie Token Account:", charlieATA.toBase58());
-
-    // // Step 3: Mint tokens to the User's Associated Token Account
-    // await mintTo(
-    //   provider.connection,
-    //   creator,
-    //   mintPubkey,
-    //   charlieATA,
-    //   creator.publicKey, // Mint authority
-    //   1000000000 // Amount to mint (in smallest unit)
-    // );
-
-    // // Step 2: Create an Associated Token Account for the User
-    // daveATA = await getAssociatedTokenAddress(mintPubkey, dave.publicKey);
-
-    // console.log("Dave Token Account:", daveATA.toBase58());
-
-    // // Step 3: Mint tokens to the User's Associated Token Account
-    // await mintTo(
-    //   provider.connection,
-    //   creator,
-    //   mintPubkey,
-    //   daveATA,
-    //   creator.publicKey, // Mint authority
-    //   1000000000 // Amount to mint (in smallest unit)
-    // );
-
-    // // Step 2: Create an Associated Token Account for the User
-    // eveATA = await getAssociatedTokenAddress(mintPubkey, eve.publicKey);
-
-    // console.log("Eve Token Account:", eveATA.toBase58());
-
-    // // Step 3: Mint tokens to the User's Associated Token Account
-    // await mintTo(
-    //   provider.connection,
-    //   creator,
-    //   mintPubkey,
-    //   eveATA,
-    //   creator.publicKey, // Mint authority
-    //   1000000000 // Amount to mint (in smallest unit)
-    // );
-
   });
 
   xit("Is initialized!", async () => {
@@ -256,8 +299,10 @@ describe("proposal-system", () => {
    * ✅ TEST CASE: Create a proposal successfully.
    */
   it("Creates a proposal", async () => {
-    let tx = await program.methods
-      .createProposal({ mint: { to: alice.publicKey, amount: new anchor.BN(100) } })
+    await program.methods
+      .createProposal({
+        mint: { to: dave.publicKey, amount: new anchor.BN(100) },
+      })
       .accounts({
         multisig: multisig.publicKey,
         proposal: proposal.publicKey,
@@ -283,7 +328,8 @@ describe("proposal-system", () => {
    * ✅ TEST CASE: Vote on a proposal.
    */
   it("Votes on a proposal", async () => {
-    await program.methods.voteProposal()
+    await program.methods
+      .voteProposal()
       .accounts({
         multisig: multisig.publicKey,
         proposal: proposal.publicKey,
@@ -292,30 +338,46 @@ describe("proposal-system", () => {
       .signers([alice])
       .rpc();
 
+    await program.methods
+      .voteProposal()
+      .accounts({
+        multisig: multisig.publicKey,
+        proposal: proposal.publicKey,
+        signer: bob.publicKey,
+      })
+      .signers([bob])
+      .rpc();
+
     const proposalAccount = await program.account.proposal.fetch(
       proposal.publicKey
     );
-    expect(proposalAccount.votes[0].toBase58()).to.eq(alice.publicKey.toBase58());
+    expect(proposalAccount.votes[0].toBase58()).to.eq(
+      alice.publicKey.toBase58()
+    );
+
+    expect(proposalAccount.votes[1].toBase58()).to.eq(bob.publicKey.toBase58());
   });
 
   /**
    * ✅ TEST CASE: Execute a proposal successfully.
    */
   it("Executes a proposal", async () => {
-    await program.rpc.executeProposal({
-      accounts: {
+    await program.methods
+      .executeProposal()
+      .accounts({
         multisig: multisig.publicKey,
         proposal: proposal.publicKey,
         executor: creator.publicKey,
         mint: mintPubkey,
         mintAuthority: creator.publicKey,
-        from: alice.publicKey, // since it is a mint the from account dosen't matter
-        to: alice.publicKey,
+        from: null,
+        fromAta: null,
+        to: dave.publicKey,
+        toAta: daveATA,
         tokenProgram: anchor.utils.token.TOKEN_PROGRAM_ID,
-        systemProgram: anchor.web3.SystemProgram.programId,
-      },
-      signers: [creator],
-    });
+      })
+      .signers([creator])
+      .rpc();
 
     const proposalAccount = await program.account.proposal.fetch(
       proposal.publicKey

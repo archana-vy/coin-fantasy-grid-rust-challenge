@@ -1,32 +1,54 @@
 Streaming transaction logs mentioning D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2. Confirmed commitment
-Transaction executed in slot 131026:
-  Signature: 4XiQ8kwaADuGCcEuVnHg9B6S4aYGVJkaBWrG3eav9vn8AzwkJuXeb7zNsRWmkAeaBqyoxa398zWHfgLRNXSDdAtu
+Transaction executed in slot 155107:
+  Signature: RiJeGEBwbpTYvxPWpDvx4YZq8LGpHXQX6KbS9niG5X3FhZZV1AJWGh2bheJ5Vq7LvrZfHTZZZU1ACJRccEfxVpV
   Status: Ok
   Log Messages:
     Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 invoke [1]
     Program log: Instruction: CreateMultisig
     Program 11111111111111111111111111111111 invoke [2]
     Program 11111111111111111111111111111111 success
-    Program data: Xhnubl8o+0LOJY6eUmG1vR8Q5zQmnriYhTR7ff2UkPophYwlt2H79/hIP8O7FHFJQqeGkFsKR9DuzUuKFXL92rtGVrOG2DycgoDgZwAAAAA=
+    Program data: Xhnubl8o+0JEr8kl9M401wQQqWCDnaRdeqvizJ6mqKvhmqCeeACK5ijRwy99Xr9dEBkzIkFpd1LUHPLDnGJRCcFiYku2kTO8k97gZwAAAAA=
     Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 consumed 6954 of 200000 compute units
     Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 success
-Transaction executed in slot 131027:
-  Signature: 5JKWBwy7ivMLSo3399jyPVJCJzr78ZzAtAXM8WbArWcghfALHn7Pa27yRUFXipqKdvhgABroz24HNcL6Y9KAFNxW
+Transaction executed in slot 155108:
+  Signature: 2W18cazVFiC9FsQYCXqi4GUTbV7fHMfics9y1YUFLk6XoEoQtGbwr5dkYhmmA9o1PjGMoQSttjhoLdXjCof4B1ix
   Status: Ok
   Log Messages:
     Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 invoke [1]
     Program log: Instruction: CreateProposal
     Program 11111111111111111111111111111111 invoke [2]
     Program 11111111111111111111111111111111 success
-    Program data: ugigbFENM87OJY6eUmG1vR8Q5zQmnriYhTR7ff2UkPophYwlt2H79xFp8Nk8Ac0RrTexHeFt1IH2clqhiJtx0SmeaEL1VUR9+Eg/w7sUcUlCp4aQWwpH0O7NS4oVcv3au0ZWs4bYPJyDgOBnAAAAAA==
+    Program data: ugigbFENM85Er8kl9M401wQQqWCDnaRdeqvizJ6mqKvhmqCeeACK5p0FzMhlb9zXYK5mHxfXnQajDsCFrdUxA4Nz86EckbOkKNHDL31ev10QGTMiQWl3UtQc8sOcYlEJwWJiS7aRM7yU3uBnAAAAAA==
     Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 consumed 9100 of 200000 compute units
     Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 success
-Transaction executed in slot 131028:
-  Signature: dJfRFUEA5M716kEVDupxGscDJQzL2m5kPCcA6YwVQFQ9gfzh7Gj5wBmzeovzAkKHgXB8ryPxhuAycwMzXNVAdSC
+Transaction executed in slot 155109:
+  Signature: 3Q1rxiAH7a45YKniB3xEdeUVBcCrYpLZxBwB9Ssm94X2wMbiNLwxfzTJMxnrGTmDN1FytcuYQJm23Gga6o9j2Gmk
   Status: Ok
   Log Messages:
     Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 invoke [1]
     Program log: Instruction: VoteProposal
-    Program data: 7ZmloqIu8+DOJY6eUmG1vR8Q5zQmnriYhTR7ff2UkPophYwlt2H79xFp8Nk8Ac0RrTexHeFt1IH2clqhiJtx0SmeaEL1VUR99Mm0fy/9ZoryBC40y0ReuOGvPfUEjNn44gKsnJHrW3GEgOBnAAAAAA==
+    Program data: 7ZmloqIu8+BEr8kl9M401wQQqWCDnaRdeqvizJ6mqKvhmqCeeACK5p0FzMhlb9zXYK5mHxfXnQajDsCFrdUxA4Nz86EckbOktDqfkdeYm3RjGER2gqOkkPie1hpIq9VFktIRHMMizneV3uBnAAAAAA==
     Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 consumed 4499 of 200000 compute units
+    Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 success
+Transaction executed in slot 155110:
+  Signature: kMyeX2nPRpseN4cv216j6AaASa9GGM1DVao4eSKzyVxFruDGupXLPM3Av3i8TmqTh6k5t4mV4e1syUUbqNNkGD7
+  Status: Ok
+  Log Messages:
+    Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 invoke [1]
+    Program log: Instruction: VoteProposal
+    Program data: 7ZmloqIu8+BEr8kl9M401wQQqWCDnaRdeqvizJ6mqKvhmqCeeACK5p0FzMhlb9zXYK5mHxfXnQajDsCFrdUxA4Nz86EckbOkh1DzQeOLrcBDvRISEtFwE/NSpWwvP+O/p1eyo1x1+pCX3uBnAAAAAA==
+    Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 consumed 4728 of 200000 compute units
+    Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 success
+Transaction executed in slot 155111:
+  Signature: gejkqzipG8LdhRQVUYE5WLL4tSjQ7SVhK3SVXDorMENdx3nMNiCYJ6AnnyWni8MvSQ8aFqeeQghbmsVodhiDEu3
+  Status: Ok
+  Log Messages:
+    Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 invoke [1]
+    Program log: Instruction: ExecuteProposal
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]
+    Program log: Instruction: MintTo
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4492 of 189266 compute units
+    Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success
+    Program data: XNW9yWVTb1NEr8kl9M401wQQqWCDnaRdeqvizJ6mqKvhmqCeeACK5p0FzMhlb9zXYK5mHxfXnQajDsCFrdUxA4Nz86EckbOkKNHDL31ev10QGTMiQWl3UtQc8sOcYlEJwWJiS7aRM7yX3uBnAAAAAA==
+    Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 consumed 17070 of 200000 compute units
     Program D9es5JgK89P3DHSDdD2bFnn3iYzc5ygRA789Sp4VUtJ2 success

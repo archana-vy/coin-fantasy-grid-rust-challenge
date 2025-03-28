@@ -15,10 +15,16 @@ pub struct ExecuteProposal<'info> {
     pub executor: Signer<'info>,
 
     #[account(mut)]
-    pub from: Account<'info, TokenAccount>,
+    pub from: Option<UncheckedAccount<'info>>, // For SOL transfer
 
     #[account(mut)]
-    pub to: Account<'info, TokenAccount>,
+    pub to: Option<UncheckedAccount<'info>>, // For SOL transfer
+
+    #[account(mut)]
+    pub from_ata: Option<Account<'info, TokenAccount>>,
+
+    #[account(mut)]
+    pub to_ata: Option<Account<'info, TokenAccount>>,
 
     #[account(mut)]
     pub mint: Account<'info, Mint>,

@@ -24,6 +24,8 @@ declare_id!(PROGRAM_ID);
 #[program]
 pub mod proposal_system {
 
+    use anchor_spl::associated_token::get_associated_token_address;
+
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
@@ -155,13 +157,30 @@ pub mod proposal_system {
 
         match proposal.instruction {
             InstructionType::Mint { to, amount } => {
+                let to_ata = get_associated_token_address(&to, &ctx.accounts.mint.key());
+
+                let to_account = ctx
+                    .accounts
+                    .to
+                    .as_ref()
+                    .ok_or(MultisigErrors::MintToAccountIsNull)?;
+
+                require!(to_account.key() == to, MultisigErrors::InvalidMintToPubkey);
+
+                let to_ata_account = ctx
+                    .accounts
+                    .to_ata
+                    .as_ref()
+                    .ok_or(MultisigErrors::MintToTokenAccountIsNull)?;
+
                 require!(
-                    ctx.accounts.to.key() == to,
-                    MultisigErrors::InvalidMintToPubkey
+                    to_ata_account.key() == to_ata,
+                    MultisigErrors::InvalidMintToATA
                 );
+
                 let cpi_accounts = MintTo {
                     mint: ctx.accounts.mint.to_account_info(),
-                    to: ctx.accounts.to.to_account_info(),
+                    to: to_ata_account.to_account_info(),
                     authority: ctx.accounts.mint_authority.to_account_info(),
                 };
                 let cpi_ctx =
@@ -169,18 +188,57 @@ pub mod proposal_system {
                 token::mint_to(cpi_ctx, amount)?;
             }
             InstructionType::Transfer { from, to, amount } => {
+                let from_account = ctx
+                    .accounts
+                    .from
+                    .as_ref()
+                    .ok_or(MultisigErrors::TransferFromAccountIsNull)?;
+
                 require!(
-                    ctx.accounts.from.key() == from,
-                    MultisigErrors::InvalidTransferToPubkey
-                );
-                require!(
-                    ctx.accounts.to.key() == to,
+                    from_account.key() == from,
                     MultisigErrors::InvalidTransferFromPubkey
                 );
 
+                let from_ata_account = ctx
+                    .accounts
+                    .from_ata
+                    .as_ref()
+                    .ok_or(MultisigErrors::TransferFromTokenAccountIsNull)?;
+
+                let from_ata = get_associated_token_address(&from, &ctx.accounts.mint.key());
+
+                require!(
+                    from_ata_account.key() == from_ata,
+                    MultisigErrors::InvalidTransferFromATA
+                );
+
+                let to_account = ctx
+                    .accounts
+                    .to
+                    .as_ref()
+                    .ok_or(MultisigErrors::TransferToAccountIsNull)?;
+
+                require!(
+                    to_account.key() == to,
+                    MultisigErrors::InvalidTransferToPubkey
+                );
+
+                let to_ata_account = ctx
+                    .accounts
+                    .to_ata
+                    .as_ref()
+                    .ok_or(MultisigErrors::TransferToTokenAccountIsNull)?;
+
+                let to_ata = get_associated_token_address(&to, &ctx.accounts.mint.key());
+
+                require!(
+                    to_ata_account.key() == to_ata,
+                    MultisigErrors::InvalidTransferToATA
+                );
+
                 let cpi_accounts = Transfer {
-                    from: ctx.accounts.from.to_account_info(),
-                    to: ctx.accounts.to.to_account_info(),
+                    from: from_ata_account.to_account_info(),
+                    to: to_ata_account.to_account_info(),
                     authority: ctx.accounts.mint_authority.to_account_info(),
                 };
                 let cpi_ctx =
@@ -193,28 +251,67 @@ pub mod proposal_system {
                 token_amount,
                 sol_price,
             } => {
+                let seller_account = ctx
+                    .accounts
+                    .from
+                    .as_ref()
+                    .ok_or(MultisigErrors::SellerAccountIsNull)?;
+
                 require!(
-                    ctx.accounts.from.key() == seller,
-                    MultisigErrors::InvalidTransferSellerPubkey
+                    seller_account.key() == seller,
+                    MultisigErrors::InvalidSellerPubkey
                 );
+
+                let seller_ata_account = ctx
+                    .accounts
+                    .from_ata
+                    .as_ref()
+                    .ok_or(MultisigErrors::SellerTokenAccountIsNull)?;
+
+                let seller_ata = get_associated_token_address(&seller, &ctx.accounts.mint.key());
+
                 require!(
-                    ctx.accounts.to.key() == buyer,
-                    MultisigErrors::InvalidTransferBuyerPubkey
+                    seller_ata_account.key() == seller_ata,
+                    MultisigErrors::InvalidSellerATA
+                );
+
+                let buyer_account = ctx
+                    .accounts
+                    .to
+                    .as_ref()
+                    .ok_or(MultisigErrors::BuyerAccountIsNull)?;
+
+                require!(
+                    buyer_account.key() == buyer,
+                    MultisigErrors::InvalidBuyerPubkey
+                );
+
+                let buyer_ata_account = ctx
+                    .accounts
+                    .to_ata
+                    .as_ref()
+                    .ok_or(MultisigErrors::BuyerTokenAccountIsNull)?;
+
+                let buyer_ata = get_associated_token_address(&buyer, &ctx.accounts.mint.key());
+
+                require!(
+                    buyer_ata_account.key() == buyer_ata,
+                    MultisigErrors::InvalidBuyerATA
                 );
 
                 // Transfer SOL from buyer to seller
                 invoke(
                     &system_instruction::transfer(&seller, &buyer, sol_price),
                     &[
-                        ctx.accounts.to.to_account_info(),
-                        ctx.accounts.from.to_account_info(),
+                        buyer_account.to_account_info(),
+                        seller_account.to_account_info(),
                         ctx.accounts.system_program.to_account_info(),
                     ],
                 )?;
 
                 let cpi_accounts = Transfer {
-                    from: ctx.accounts.from.to_account_info(),
-                    to: ctx.accounts.to.to_account_info(),
+                    from: seller_ata_account.to_account_info(),
+                    to: buyer_ata_account.to_account_info(),
                     authority: ctx.accounts.mint_authority.to_account_info(),
                 };
                 let cpi_ctx =
@@ -227,28 +324,67 @@ pub mod proposal_system {
                 token_amount,
                 sol_price,
             } => {
+                let seller_account = ctx
+                    .accounts
+                    .from
+                    .as_ref()
+                    .ok_or(MultisigErrors::SellerAccountIsNull)?;
+
                 require!(
-                    ctx.accounts.from.key() == seller,
-                    MultisigErrors::InvalidTransferSellerPubkey
+                    seller_account.key() == seller,
+                    MultisigErrors::InvalidSellerPubkey
                 );
+
+                let seller_ata_account = ctx
+                    .accounts
+                    .from_ata
+                    .as_ref()
+                    .ok_or(MultisigErrors::SellerTokenAccountIsNull)?;
+
+                let seller_ata = get_associated_token_address(&seller, &ctx.accounts.mint.key());
+
                 require!(
-                    ctx.accounts.to.key() == buyer,
-                    MultisigErrors::InvalidTransferBuyerPubkey
+                    seller_ata_account.key() == seller_ata,
+                    MultisigErrors::InvalidSellerATA
+                );
+
+                let buyer_account = ctx
+                    .accounts
+                    .to
+                    .as_ref()
+                    .ok_or(MultisigErrors::BuyerAccountIsNull)?;
+
+                require!(
+                    buyer_account.key() == buyer,
+                    MultisigErrors::InvalidBuyerPubkey
+                );
+
+                let buyer_ata_account = ctx
+                    .accounts
+                    .to_ata
+                    .as_ref()
+                    .ok_or(MultisigErrors::BuyerTokenAccountIsNull)?;
+
+                let buyer_ata = get_associated_token_address(&buyer, &ctx.accounts.mint.key());
+
+                require!(
+                    buyer_ata_account.key() == buyer_ata,
+                    MultisigErrors::InvalidBuyerATA
                 );
 
                 // Transfer SOL from buyer to seller
                 invoke(
                     &system_instruction::transfer(&seller, &buyer, sol_price),
                     &[
-                        ctx.accounts.to.to_account_info(),
-                        ctx.accounts.from.to_account_info(),
+                        buyer_account.to_account_info(),
+                        seller_account.to_account_info(),
                         ctx.accounts.system_program.to_account_info(),
                     ],
                 )?;
 
                 let cpi_accounts = Transfer {
-                    from: ctx.accounts.from.to_account_info(),
-                    to: ctx.accounts.to.to_account_info(),
+                    from: seller_ata_account.to_account_info(),
+                    to: buyer_ata_account.to_account_info(),
                     authority: ctx.accounts.mint_authority.to_account_info(),
                 };
                 let cpi_ctx =
