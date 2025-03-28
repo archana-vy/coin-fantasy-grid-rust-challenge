@@ -46,21 +46,34 @@ describe("proposal-system", () => {
 
   before(async () => {
     creator = Keypair.generate();
+    console.log("Creator Pubkey:", creator.publicKey.toBase58());
     alice = Keypair.generate();
+    console.log("Alice Pubkey:", alice.publicKey.toBase58());
     bob = Keypair.generate();
+    console.log("Bob Pubkey:", bob.publicKey.toBase58());
     charlie = Keypair.generate();
+    console.log("CHarlie Pubkey:", charlie.publicKey.toBase58());
     dave = Keypair.generate();
+    console.log("Dave Pubkey:", dave.publicKey.toBase58());
     eve = Keypair.generate();
+    console.log("Eve Pubkey:", eve.publicKey.toBase58());
 
     signers = [creator, alice, bob];
     threshold = 2;
 
     multisig_program = Keypair.generate();
+    console.log(
+      "Multisig Program Pubkey:",
+      multisig_program.publicKey.toBase58()
+    );
 
     multisig = Keypair.generate();
+    console.log("Multisig Pubkey:", multisig.publicKey.toBase58());
     proposal = Keypair.generate();
+    console.log("Proposal Pubkey:", proposal.publicKey.toBase58());
 
     mint = Keypair.generate();
+    console.log("Mint Pubkey:", mint.publicKey.toBase58());
 
     let tx = await provider.connection.requestAirdrop(
       creator.publicKey, // signer needing SOL
